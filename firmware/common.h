@@ -4,32 +4,32 @@
 #include <stdint.h>
 
 
-// Set to 1 for compiling on systems with very limited hardware
-#define NO_HW 0
+// // Set to 1 for compiling on systems with very limited hardware
+// #define NO_HW 0
 
-// system mode
-enum mode_t : uint8_t
-{
-    MANUAL_MODE   = 0,
-    MENU_MODE     = 1,
-    SETPOINT_MODE = 2
-};
+// // system mode
+// enum mode_t : uint8_t
+// {
+//     MANUAL_MODE   = 0,
+//     MENU_MODE     = 1,
+//     SETPOINT_MODE = 2
+// };
 
-// servo calibration mode
-enum servocal_t : uint8_t
-{
-    NOTCAL = 0,
-    CAL = 1,
-    DONTCAL = 2
-};
+// // servo calibration mode
+// enum servocal_t : uint8_t
+// {
+//     NOTCAL = 0,
+//     CAL = 1,
+//     DONTCAL = 2
+// };
 
-// radio packet type
-enum packet_type_t  : uint8_t
-{
-    CONFIG_PACKET       = 0,
-    TELEMETRY_PACKET    = 1,
-    RESPONSE_PACKET     = 2
-};
+// // radio packet type
+// enum packet_type_t  : uint8_t
+// {
+//     CONFIG_PACKET       = 0,
+//     TELEMETRY_PACKET    = 1,
+//     RESPONSE_PACKET     = 2
+// };
 
 // Number of seconds that define a hardware-sleep period (base time = 32 secs)
 #define SLEEP_TIME_SECS 32
@@ -55,7 +55,7 @@ enum packet_type_t  : uint8_t
 // Pin mapping -----------------------------------------------------
 #define CLICK_PIN                 0
 #define GREEN_PIN                 3
-#define CHANNEL_B                 10
+#define MIC                       10
 #define CHANNEL_A                 11
 #define RED_PIN                   14
 #define BLUE_PIN                  15
