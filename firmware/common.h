@@ -55,7 +55,6 @@
 // Pin mapping -----------------------------------------------------
 #define CLICK_PIN                 0
 #define GREEN_PIN                 3
-#define MIC                       10
 #define CHANNEL_A                 11
 #define RED_PIN                   14
 #define BLUE_PIN                  15
@@ -67,6 +66,7 @@
 #define FLASH_SS                  23
 #define VBUS_SENSE                A0
 #define TEMP_SENSE                A3
+#define MIC                       A4
 #define VBAT_SENSE                A7
 
 // Define error code bits ------------------------------------------
