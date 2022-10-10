@@ -1,16 +1,18 @@
 import serial
 import matplotlib.pyplot as plt
+import sys
 
-# TODO: need to make this parameter-based instead of hard-coded
+# USAGE: python3 py/serial_reader.py <COM_PORT> <NUM_POINTS>
 
-ser = serial.Serial("COM6", 115200, timeout=1)
-num_pts = 1000
+com_port = sys.argv[1]
+num_pts = sys.argv[2] if len(sys.argv) > 2 else 1000
+ser = serial.Serial(com_port, 115200, timeout=1)
 data = []
 counter = 0
 
 while counter < num_pts:
-    datum = ser.readline()
-    data.append(float(datum.decode('utf-8').strip()))
+    datum = float(ser.readline().decode('utf-8').strip())
+    data.append(datum)
     counter += 1
 
 plt.plot(range(num_pts), data, color="blue")
