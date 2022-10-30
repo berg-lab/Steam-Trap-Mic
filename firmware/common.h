@@ -36,6 +36,9 @@
 
 // Misc. global variables ------------------------------------------
 #define SERIAL_BAUD               115200
+#define HISTORY_THRESHOLD         128
+#define AMPLITUDE_THRESHOLD       0.35f
+#define VOLTAGE_REF               3.3f
 
 // I2C Addresses ---------------------------------------------------
 
@@ -56,6 +59,7 @@
 #define CLICK_PIN                 0
 #define GREEN_PIN                 3
 #define CHANNEL_A                 11
+#define POWER                     13
 #define RED_PIN                   14
 #define BLUE_PIN                  15
 #define DRIVER_POWER_PIN          18
