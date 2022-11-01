@@ -8,8 +8,8 @@
 void setup() {
   Serial.begin(115200);
   pinMode(MIC, INPUT);
-  pinMode(POWER, OUTPUT);
-  digitalWrite(POWER, HIGH);
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, HIGH);
   delay(1);
 }
 
@@ -30,7 +30,7 @@ void loop() {
         // discover min and max to calculate amplitude
         min = data[0];
         max = data[0];
-        for (int i; i<HISTORY_THRESHOLD; i++) {
+        for (int i=0; i<HISTORY_THRESHOLD; i++) {
             if (data[i] < min) {
                 min = data[i];
             }
@@ -38,9 +38,8 @@ void loop() {
                 max = data[i];
             }
         }
-
         // determine whether valve is open or closed
-        if (max - min > AMPLITUDE_THRESHOLD) {
+        if ((max - min) > AMPLITUDE_THRESHOLD) {
             Serial.println(1);
         }
         else {
