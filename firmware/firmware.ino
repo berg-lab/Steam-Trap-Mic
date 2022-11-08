@@ -1,16 +1,16 @@
 #include "common.h"
 
-#if defined (MOTEINO_M0) && defined(SERIAL_PORT_USBVIRTUAL)
-    #define Serial SERIAL_PORT_USBVIRTUAL // Required for Serial on Zero based boards
-#endif
-
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUD);
+  while(!Serial);
   pinMode(MIC, INPUT);
   pinMode(POWER_PIN, OUTPUT);
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
-  delay(1);
+  analogReadResolution(12);
 }
 
 // the loop function runs over and over again forever
