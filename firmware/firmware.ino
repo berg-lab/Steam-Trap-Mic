@@ -13,53 +13,47 @@ void setup() {
   analogReadResolution(12); //use 12-bit resolution for analog reading
 
   // initialize serial communication for debugging
-  delay(5*1000);
+  delay(Secs_to_ms(5));
   Serial.begin(SERIAL_BAUD);
-  delay(5*1000);
+  delay(Secs_to_ms(5));
 
   // configure device with MAC address
   // Flash.deviceSetup();
 
   // initialize radio communication for transmitting data
   Radio.initializeRadio();
+  Radio.sendConfigPacket(3);
 }
+
+
+float read_in;
+float scaled_val;
+int counter;
 
 // the loop function runs over and over again forever
 void loop() {
-  // float data[HISTORY_THRESHOLD];
-  // int counter = 0;
-  float read_in;
-  // float min;
-  // float max;
-  // float amplitude_threshold = learnAmplitudeThreshold();
+  counter = 100;
 
-  while (1) {
+  // listen for 25 seconds at every quarter second
+  while (--counter >= 0) {
     // get raw analog reading from mic input
-    read_in = analogRead (MIC);
-    Serial.println((read_in*MAX_VOLTAGE)/4095);
-    // data[counter % HISTORY_THRESHOLD] = read_in;
+    read_in = analogRead(MIC);
 
-    // // check if data array is fully populated
-    // if (counter > HISTORY_THRESHOLD) {
-    //     // discover min and max to calculate amplitude
-    //     min = data[0];
-    //     max = data[0];
-    //     for (int i=0; i<HISTORY_THRESHOLD; i++) {
-    //         if (data[i] < min) {
-    //             min = data[i];
-    //         }
-    //         if (data[i] > max) {
-    //             max = data[i];
-    //         }
-    //     }
-        // determine whether valve is open or closed
-        // if ((max - min) > amplitude_threshold) {
-        //     // Serial.println(1);
-        // }
-        // else {
-        //     // Serial.println(0);
-        // }
-    // }
-    // counter++;
+    // convert back to true voltage
+    scaled_val = (read_in * MAX_VOLTAGE)/4095;
+
+    // TODO: further convert to frequency
+
+    // broadcast data over radio
+    Radio.sendDataPacket(scaled_val, Error.get_error_byte());
+
+    // wait 0.25 seconds
+    delay(Secs_to_ms(0.25));    
   }
+
+  
+
+  
+
+  delay(Secs_to_ms(1));
 }
