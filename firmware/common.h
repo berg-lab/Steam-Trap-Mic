@@ -1,20 +1,18 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-// Define the current serial port
+// Define the current serial port ----------------------------------
 #if defined (MOTEINO_M0) && defined (SERIAL_PORT_USBVIRTUAL)
   #define Serial SERIAL_PORT_USBVIRTUAL // Required for Serial on Zero based boards
 #endif
 
-// Misc. global constants ------------------------------------------
+// Permanent globals -----------------------------------------------
 #define FW_VERSION                1
+#define TELEMETRY_VERSION         1
+#define DEVICE_TYPE               2 // 1 denotes BORC, 2 denotes STM
+
+// Global configuration constants ----------------------------------
 #define SERIAL_BAUD               115200
-#define READING_DELAY             0.05f
-#define TRIAL_DELAY               60
-#define HISTORY_THRESHOLD         128
-#define NUM_TUNING_TRIALS         5  
-#define NUM_TUNING_SAMPLES        128          
-#define TMP_AMPLITUDE_THRESHOLD   0.35f
 #define MAX_VOLTAGE               5.0f
 #define ACK_TIMEOUT               10
 
@@ -23,7 +21,7 @@
 #define POWER_PIN                 13
 #define FLASH_SS                  23
 
-// Error bytes -----------------------------------------------------
+// Error bits ------------------------------------------------------
 #define BATT_ERR                  0   // battery low/bad voltage
 #define TEMP_SENSE_ERR            1   // temp sensor not working
 #define LED_DRV_ERR               2   // LED driver not working
@@ -32,5 +30,9 @@
 #define FLASH_ERR                 5   // SPI flash error
 #define RADIO_ERR                 6   // Radio error
 #define SERVO_ERR                 7   // servo error (0 current or very high current)
+
+// Macros ----------------------------------------------------------
+#define Secs_to_ms(x)             ((int) ((x) * 1000))
+#define Mins_to_ms(x)             ((int) ((x) * 1000 * 60))
 
 #endif
