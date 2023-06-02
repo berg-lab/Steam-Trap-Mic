@@ -9,18 +9,19 @@
 class CRadio {
   public:
     void initializeRadio();
-    void sendDataPacket(uint8_t tx_id, uint16_t analog_reading, uint8_t error_byte);
+    void sendDataPacket(uint16_t analog_reading, uint8_t error_byte);
     void sendConfigPacket(int no_of_attempts);
     
   private:
-    uint8_t m_transaction_id;
+    uint8_t transaction_id;
     void handleIncomingPacket(const unsigned char* raw);
     
+    //HARDCODING FOR TESTING ONLY
     uint8_t GATEWAY_ID = 1;
-    uint16_t NODE_ID = 999; // 999 = node not configured; 1000 = node currently being configured (limit: 1023)
-    uint8_t NETWORK_ID = 99; // 99 = configuration network, 10 = sensor network (up to 255)
+    uint16_t NODE_ID = 60; // 999 = node not configured; 1000 = node currently being configured (limit: 1023)
+    uint8_t NETWORK_ID = 10; // 99 = configuration network, 10 = sensor network (up to 255)
 
-    char ENCRYPT_KEY[17] = "sampleEncryptKey";
+    char ENCRYPT_KEY[17] = "1234123412341234";
     char NODE_TYPE[4] = "STM";
 };
 

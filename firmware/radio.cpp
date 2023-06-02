@@ -16,7 +16,7 @@
   #else
     RFM69 radio;
   #endif
-  #define RADIO_FREQ   RF69_915MHZ
+  #define RADIO_FREQ RF69_915MHZ
 #endif
 //=========================================================================================================
 // maps a structure onto a buffer named "raw"
@@ -69,9 +69,6 @@ enum packet_type_t  : uint8_t
     RESPONSE_PACKET     = 2
 };
 
-// radio packet version
-#define TELEMETRY_VERSION 1
-
 //=========================================================================================================
 // initializeRadio() - Start up radio function and report if error occurs
 //=========================================================================================================
@@ -94,6 +91,9 @@ void CRadio::initializeRadio() {
     // assign encription key to radio object for later transmission
     radio.encrypt(ENCRYPT_KEY);
     radio.sleep();
+
+    // start the transaction id at 1
+    transaction_id = 1;
 }
 //=========================================================================================================
 
@@ -101,7 +101,7 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(uint8_t tx_id, uint16_t analog_reading, uint8_t error_byte)
+void CRadio::sendDataPacket(uint16_t analog_reading, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;
@@ -111,7 +111,7 @@ void CRadio::sendDataPacket(uint8_t tx_id, uint16_t analog_reading, uint8_t erro
     telemetry.version          = TELEMETRY_VERSION;
     telemetry.analog_reading   = analog_reading;
     telemetry.error_byte       = error_byte;
-    telemetry.transaction_id   = tx_id;
+    telemetry.transaction_id   = transaction_id;
     
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempts = 0; attempts < 3; ++attempts)
@@ -138,9 +138,8 @@ void CRadio::sendDataPacket(uint8_t tx_id, uint16_t analog_reading, uint8_t erro
         if (success) break;
     }
 
-    // TODO: MOVE INTO MAIN LOOP
     // increment transaction ID and reset it to 1 if it overflows
-    if (++m_transaction_id == 0) m_transaction_id = 1;
+    if (++transaction_id == 0) transaction_id = 1;
 }
 //=========================================================================================================
 
