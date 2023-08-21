@@ -35,7 +35,7 @@
 //=========================================================================================================
 struct device_config_t
 {
-    uint8_t     packet_type;
+    uint8_t     pkt_type;
     uint8_t     version;
     uint8_t     device_type;
     uint16_t    firmware_version;
@@ -44,7 +44,7 @@ struct device_config_t
 
 struct stm_trap_telemetry_t
 {
-    uint8_t     packet_type;
+    uint8_t     pkt_type;
     uint8_t     version;
     uint32_t    analog_reading;
     uint8_t     error_byte;
@@ -53,7 +53,7 @@ struct stm_trap_telemetry_t
 
 struct from_gateway_t
 {
-    uint8_t     packet_type;
+    uint8_t     pkt_type;
     uint8_t     tasks_bit_field;
     uint8_t     network_id;
     uint16_t    node_id;
@@ -62,7 +62,7 @@ struct from_gateway_t
 //=========================================================================================================
 
 // radio packet type
-enum packet_type_t  : uint8_t
+enum pkt_type_t  : uint8_t
 {
     CONFIG_PACKET       = 0,
     TELEMETRY_PACKET    = 1,
@@ -107,7 +107,7 @@ void CRadio::sendDataPacket(uint16_t analog_reading, uint8_t error_byte)
     bool success = false;
 
     // Fill in the data in the telemetry packet
-    telemetry.packet_type      = TELEMETRY_PACKET;
+    telemetry.pkt_type      = TELEMETRY_PACKET;
     telemetry.version          = TELEMETRY_VERSION;
     telemetry.analog_reading   = analog_reading;
     telemetry.error_byte       = error_byte;
@@ -153,7 +153,7 @@ void CRadio::sendConfigPacket(int no_of_attempts)
     bool success = false;
 
     // Fill in the node config details in the telemetry packet
-    device_config.packet_type       = CONFIG_PACKET;
+    device_config.pkt_type       = CONFIG_PACKET;
     device_config.device_type       = 2;
     device_config.version           = TELEMETRY_VERSION;
     device_config.firmware_version  = FW_VERSION;
@@ -203,7 +203,7 @@ void CRadio::handleIncomingPacket(const unsigned char* raw)
     map_struct(from_gateway_t, packet);
 
     // make sure the packet type is a response from the gateway to BORC
-    if (packet.packet_type == RESPONSE_PACKET)
+    if (packet.pkt_type == RESPONSE_PACKET)
     {   
         // blink the LED to indicate we a received packet
         for (int x=0; x<100; x++) {
