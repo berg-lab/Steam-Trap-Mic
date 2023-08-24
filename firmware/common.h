@@ -17,7 +17,8 @@
 #define ACK_TIMEOUT               10
 
 // Pin mapping -----------------------------------------------------
-#define MIC                       A4
+#define TEMP_PRE_PIN              A1
+#define TEMP_POST_PIN             A2
 #define POWER_PIN                 13
 #define FLASH_SS                  23
 
