@@ -6,7 +6,8 @@
 void setup() {
 
   // initialize pins input/output
-  pinMode(MIC, INPUT);
+  pinMode(TEMP_PRE_PIN, INPUT);
+  pinMode(TEMP_POST_PIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
@@ -30,22 +31,29 @@ float read_in;
 float scaled_val;
 int counter;
 
+// temperature intinial values (hard coded for testing)
+int postTemp = 20;
+int preTemp = 16;
+bool wrk = true;
+
 // the loop function runs over and over again forever
 void loop() {
   counter = 100;
 
   // listen for 25 seconds at every quarter second
   while (--counter >= 0) {
-    // get raw analog reading from mic input
-    read_in = analogRead(MIC);
+    // get raw analog reading from thermal couplers
+    // preTemp = analogRead(TEMP_PRE_PIN);
+    // postTemp = analogRead(TEMP_POST_PIN);
 
-    // convert back to true voltage
-    scaled_val = (read_in * MAX_VOLTAGE)/4095;
-
-    // TODO: further convert to frequency
+    // Algorithm to find out if on or not
+      //  return string result
+      // historicallizing it into array of n values
+      // append to array[-1] and remove array
+      // wrk = algorithm_output;
 
     // broadcast data over radio
-    Radio.sendDataPacket(scaled_val, Error.get_error_byte());
+    Radio.sendDataPacket(preTemp, postTemp, wrk, Error.get_error_byte());
 
     // wait 0.25 seconds
     delay(Secs_to_ms(0.25));    
