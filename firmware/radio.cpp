@@ -46,7 +46,9 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    uint32_t    analog_reading;
+    uint32_t    pre_temp_reading;
+    uint32_t    post_temp_reading;
+    bool        is_working;
     uint8_t     error_byte;
     uint8_t     transaction_id;
 };
@@ -101,17 +103,19 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(uint16_t analog_reading, uint8_t error_byte)
+void CRadio::sendDataPacket(uint32_t pre_temp, uint32_t post_temp, bool is_working_2, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;
 
     // Fill in the data in the telemetry packet
-    telemetry.pkt_type      = TELEMETRY_PACKET;
-    telemetry.version          = TELEMETRY_VERSION;
-    telemetry.analog_reading   = analog_reading;
-    telemetry.error_byte       = error_byte;
-    telemetry.transaction_id   = transaction_id;
+    telemetry.pkt_type          = TELEMETRY_PACKET;
+    telemetry.version           = TELEMETRY_VERSION;
+    telemetry.pre_temp_reading  = pre_temp;
+    telemetry.post_temp_reading = post_temp;
+    telemetry.is_working        = is_working_2;
+    telemetry.error_byte        = error_byte;
+    telemetry.transaction_id    = transaction_id;
     
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempts = 0; attempts < 3; ++attempts)
