@@ -71,6 +71,10 @@ enum pkt_type_t  : uint8_t
     RESPONSE_PACKET     = 2
 };
 
+// Temp values
+uint32_t pre_temp_val;
+uint32_t post_temp_val;
+
 //=========================================================================================================
 // initializeRadio() - Start up radio function and report if error occurs
 //=========================================================================================================
@@ -116,7 +120,10 @@ void CRadio::sendDataPacket(uint32_t pre_temp, uint32_t post_temp, bool is_worki
     telemetry.is_working        = is_working_2;
     telemetry.error_byte        = error_byte;
     telemetry.transaction_id    = transaction_id;
-    
+    // test temporaly
+    pre_temp_val = pre_temp;
+    post_temp_val = post_temp;
+
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempts = 0; attempts < 3; ++attempts)
     {
@@ -219,3 +226,12 @@ void CRadio::handleIncomingPacket(const unsigned char* raw)
     }
 }
 //=========================================================================================================
+uint32_t CRadio::getPreTemp()
+{
+    return pre_temp_val;
+}
+
+uint32_t CRadio::getPostTemp()
+{
+    return post_temp_val;
+}

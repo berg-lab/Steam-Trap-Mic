@@ -54,6 +54,10 @@ void loop() {
 
     // broadcast data over radio
     Radio.sendDataPacket(preTemp, postTemp, wrk, Error.get_error_byte());
+    Serial.print("\nPre Temp: ");
+    Serial.print(Radio.getPreTemp());
+    Serial.print("\nPost Temp: ");
+    Serial.print(Radio.getPostTemp());
 
     // wait 0.25 seconds
     delay(Secs_to_ms(0.25));    
