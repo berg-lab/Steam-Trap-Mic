@@ -25,6 +25,10 @@ class CRadio {
 
     char ENCRYPT_KEY[17] = "1234123412341234";
     char NODE_TYPE[4] = "STM";
+
+    // Temp values
+    uint32_t pre_temp_val;
+    uint32_t post_temp_val;
 };
 
 #endif

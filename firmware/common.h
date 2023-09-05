@@ -33,7 +33,8 @@
 #define SERVO_ERR                 7   // servo error (0 current or very high current)
 
 // Macros ----------------------------------------------------------
-#define Secs_to_ms(x)             ((int) ((x) * 1000))
-#define Mins_to_ms(x)             ((int) ((x) * 1000 * 60))
+// #define Secs_to_ms(x)             ((int) ((x) * 1000))
+// #define Mins_to_ms(x)             ((int) ((x) * 1000 * 60))
+#define 
 
 #endif

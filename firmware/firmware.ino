@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "common.h"
 #include "globals.h"
+#include "max6675.h"
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -14,16 +15,20 @@ void setup() {
   analogReadResolution(12); //use 12-bit resolution for analog reading
 
   // initialize serial communication for debugging
-  delay(Secs_to_ms(5));
+  delay(10000);
+  Serial.println("Passed sendConfigPacket()");
   Serial.begin(SERIAL_BAUD);
-  delay(Secs_to_ms(5));
+  delay(10000);
 
   // configure device with MAC address
   // Flash.deviceSetup();
 
   // initialize radio communication for transmitting data
+  Serial.println("Passed sendConfigPacket()");
   Radio.initializeRadio();
+  Serial.println("Passed sendConfigPacket()");
   Radio.sendConfigPacket(3);
+  Serial.println("Passed sendConfigPacket()");
 }
 
 
@@ -39,6 +44,7 @@ bool wrk = true;
 // the loop function runs over and over again forever
 void loop() {
   counter = 100;
+  Serial.println(counter);
 
   // listen for 25 seconds at every quarter second
   while (--counter >= 0) {
@@ -53,6 +59,7 @@ void loop() {
       // wrk = algorithm_output;
 
     // broadcast data over radio
+    Serial.print("Before data packet");
     Radio.sendDataPacket(preTemp, postTemp, wrk, Error.get_error_byte());
     Serial.print("\nPre Temp: ");
     Serial.print(Radio.getPreTemp());
@@ -60,12 +67,12 @@ void loop() {
     Serial.print(Radio.getPostTemp());
 
     // wait 0.25 seconds
-    delay(Secs_to_ms(0.25));    
+    delay(250);    
   }
 
   
 
   
 
-  delay(Secs_to_ms(1));
+  delay(1000);
 }

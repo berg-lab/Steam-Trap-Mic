@@ -46,8 +46,8 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    uint32_t    pre_temp_reading;
-    uint32_t    post_temp_reading;
+    long    pre_temp_reading[n];
+    long    post_temp_reading[n];
     bool        is_working;
     uint8_t     error_byte;
     uint8_t     transaction_id;
@@ -70,10 +70,6 @@ enum pkt_type_t  : uint8_t
     TELEMETRY_PACKET    = 1,
     RESPONSE_PACKET     = 2
 };
-
-// Temp values
-uint32_t pre_temp_val;
-uint32_t post_temp_val;
 
 //=========================================================================================================
 // initializeRadio() - Start up radio function and report if error occurs
@@ -165,7 +161,7 @@ void CRadio::sendConfigPacket(int no_of_attempts)
 
     // Fill in the node config details in the telemetry packet
     device_config.pkt_type       = CONFIG_PACKET;
-    device_config.device_type       = 2;
+    device_config.device_type       = DEVICE_TYPE;
     device_config.version           = TELEMETRY_VERSION;
     device_config.firmware_version  = FW_VERSION;
     
@@ -181,26 +177,30 @@ void CRadio::sendConfigPacket(int no_of_attempts)
             delay(250);
             digitalWrite(LED_BUILTIN, LOW);
             delay(250);
+            Serial.print("Blinkie #: ");
+            Serial.print(attempt*10+x);
+            Serial.print("\n");
         }
-        
+        Serial.println(attempt);
         // start a 1 second timer
-        Timer.setTimer(1);
+        // Timer.setTimer(1);
 
         // sit in a loop for 1 second until a response is received
-        while (!Timer.timerExpired())
-        {
-            // if we receive a response
-            if (radio.receiveDone())
-            {
-                // handle response and break out
-                handleIncomingPacket(radio.DATA);
-                success = true;
-                break;
-            }
-        }
-        Timer.resetAlarm();
-        if (success) break;
+        // while (!Timer.timerExpired())
+        // {
+        //     // if we receive a response
+        //     if (radio.receiveDone())
+        //     {
+        //         // handle response and break out
+        //         handleIncomingPacket(radio.DATA);
+        //         success = true;
+        //         break;
+        //     }
+        // }
+        // Timer.resetAlarm();
+        // if (success) break;
     }
+    Serial.println("Finally done");
 }
 //=========================================================================================================
 
