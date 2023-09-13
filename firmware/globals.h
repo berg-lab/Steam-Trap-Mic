@@ -6,10 +6,12 @@
 #include "error.h"
 #include "timer.h"
 #include "SPIFlash.h"
+#include "max6675.h"
 
 extern CError   Error;
 extern CRadio   Radio;
 extern CTimer   Timer;
 extern SPIFlash Flash;
+extern MAX6675 PreCouple;
 
 #endif

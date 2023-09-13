@@ -18,6 +18,7 @@
   #endif
   #define RADIO_FREQ RF69_915MHZ
 #endif
+#define IS_RFM69HW
 //=========================================================================================================
 // maps a structure onto a buffer named "raw"
 //=========================================================================================================
@@ -46,8 +47,9 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    long    pre_temp_reading[n];
-    long    post_temp_reading[n];
+    int         array_size = ARRAY_LENGTH;
+    long        pre_temp_array[ARRAY_LENGTH];
+    long        post_temp_array[ARRAY_LENGTH];
     bool        is_working;
     uint8_t     error_byte;
     uint8_t     transaction_id;
@@ -80,10 +82,10 @@ void CRadio::initializeRadio() {
     // if hardware permits, try radio object initialization
     if (!radio.initialize(RADIO_FREQ, NODE_ID, NETWORK_ID))
         Error.raise_error(RADIO_ERR);
-    else
+    else {
         Error.clear_error(RADIO_ERR);
         Serial.println("Radio initialized!");
-
+    }
     // if hardware permits, try setting high power
     #ifdef IS_RFM69HW
         radio.setHighPower(); //uncomment only for RFM69HW!
@@ -103,7 +105,7 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(uint32_t pre_temp, uint32_t post_temp, bool is_working_2, uint8_t error_byte)
+void CRadio::sendDataPacket(int array_size, long *pre_temp_array, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;
@@ -111,14 +113,12 @@ void CRadio::sendDataPacket(uint32_t pre_temp, uint32_t post_temp, bool is_worki
     // Fill in the data in the telemetry packet
     telemetry.pkt_type          = TELEMETRY_PACKET;
     telemetry.version           = TELEMETRY_VERSION;
-    telemetry.pre_temp_reading  = pre_temp;
-    telemetry.post_temp_reading = post_temp;
-    telemetry.is_working        = is_working_2;
+    telemetry.array_size        = array_size;
+    for (int i=0;i<ARRAY_LENGTH;i++) telemetry.pre_temp_array[i] = pre_temp_array[i];
+    // telemetry.post_temp_reading = post_temp;
+    // telemetry.is_working        = is_working_2;
     telemetry.error_byte        = error_byte;
     telemetry.transaction_id    = transaction_id;
-    // test temporaly
-    pre_temp_val = pre_temp;
-    post_temp_val = post_temp;
 
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempts = 0; attempts < 3; ++attempts)
@@ -164,6 +164,8 @@ void CRadio::sendConfigPacket(int no_of_attempts)
     device_config.device_type       = DEVICE_TYPE;
     device_config.version           = TELEMETRY_VERSION;
     device_config.firmware_version  = FW_VERSION;
+    uint8_t temp2[8] = {0,0,0,0,0,0,0,0};
+    memcpy(temp2, device_config.uid, sizeof(uint8_t)*8);
     
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempt = 0; attempt < no_of_attempts; ++attempt)
@@ -186,19 +188,23 @@ void CRadio::sendConfigPacket(int no_of_attempts)
         // Timer.setTimer(1);
 
         // sit in a loop for 1 second until a response is received
-        // while (!Timer.timerExpired())
-        // {
-        //     // if we receive a response
-        //     if (radio.receiveDone())
-        //     {
-        //         // handle response and break out
-        //         handleIncomingPacket(radio.DATA);
-        //         success = true;
-        //         break;
-        //     }
-        // }
-        // Timer.resetAlarm();
-        // if (success) break;
+        int countt = 0;
+        while (countt<10)
+        {
+            // if we receive a response
+            if (radio.receiveDone())
+            {
+                // handle response and break out
+                handleIncomingPacket(radio.DATA);
+                success = true;
+                break;
+            }
+            Serial.print("Iteration #: ");
+            Serial.println(countt);
+            countt++;
+            delay(100);
+        }
+        if (success) break;
     }
     Serial.println("Finally done");
 }
@@ -226,12 +232,12 @@ void CRadio::handleIncomingPacket(const unsigned char* raw)
     }
 }
 //=========================================================================================================
-uint32_t CRadio::getPreTemp()
-{
-    return pre_temp_val;
-}
+// uint32_t CRadio::getPreTemp()
+// {
+//     return pre_temp_val;
+// }
 
-uint32_t CRadio::getPostTemp()
-{
-    return post_temp_val;
-}
+// uint32_t CRadio::getPostTemp()
+// {
+//     return post_temp_val;
+// }

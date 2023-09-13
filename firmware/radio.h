@@ -9,10 +9,10 @@
 class CRadio {
   public:
     void initializeRadio();
-    void sendDataPacket(uint32_t pre_temp, uint32_t post_temp, bool is_working_2, uint8_t error_byte);
+    void sendDataPacket(int array_size, long *pre_temp_array, uint8_t error_byte);
     void sendConfigPacket(int no_of_attempts);
-    uint32_t getPreTemp();
-    uint32_t getPostTemp();
+    // uint32_t getPreTemp();
+    // uint32_t getPostTemp();
     
   private:
     uint8_t transaction_id;
@@ -25,10 +25,6 @@ class CRadio {
 
     char ENCRYPT_KEY[17] = "1234123412341234";
     char NODE_TYPE[4] = "STM";
-
-    // Temp values
-    uint32_t pre_temp_val;
-    uint32_t post_temp_val;
 };
 
 #endif
