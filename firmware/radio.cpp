@@ -47,10 +47,7 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    int         array_size = ARRAY_LENGTH;
-    long        pre_temp_array[ARRAY_LENGTH];
-    long        post_temp_array[ARRAY_LENGTH];
-    bool        is_working;
+    long        temperature;
     uint8_t     error_byte;
     uint8_t     transaction_id;
 };
@@ -78,19 +75,19 @@ enum pkt_type_t  : uint8_t
 //=========================================================================================================
 void CRadio::initializeRadio() {
 
-#ifdef WITHRFM69
-    // if hardware permits, try radio object initialization
-    if (!radio.initialize(RADIO_FREQ, NODE_ID, NETWORK_ID))
-        Error.raise_error(RADIO_ERR);
-    else {
-        Error.clear_error(RADIO_ERR);
-        Serial.println("Radio initialized!");
-    }
-    // if hardware permits, try setting high power
-    #ifdef IS_RFM69HW
-        radio.setHighPower(); //uncomment only for RFM69HW!
+    #ifdef WITHRFM69
+        // if hardware permits, try radio object initialization
+        if (!radio.initialize(RADIO_FREQ, NODE_ID, NETWORK_ID))
+            Error.raise_error(RADIO_ERR);
+        else {
+            Error.clear_error(RADIO_ERR);
+            Serial.println("Radio initialized!");
+        }
+        // if hardware permits, try setting high power
+        #ifdef IS_RFM69HW
+            radio.setHighPower(); //uncomment only for RFM69HW!
+        #endif
     #endif
-#endif
 
     // assign encription key to radio object for later transmission
     radio.encrypt(ENCRYPT_KEY);
@@ -105,7 +102,7 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(int array_size, long *pre_temp_array, uint8_t error_byte)
+void CRadio::sendDataPacket(long pre_temp, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;
@@ -113,10 +110,7 @@ void CRadio::sendDataPacket(int array_size, long *pre_temp_array, uint8_t error_
     // Fill in the data in the telemetry packet
     telemetry.pkt_type          = TELEMETRY_PACKET;
     telemetry.version           = TELEMETRY_VERSION;
-    telemetry.array_size        = array_size;
-    for (int i=0;i<ARRAY_LENGTH;i++) telemetry.pre_temp_array[i] = pre_temp_array[i];
-    // telemetry.post_temp_reading = post_temp;
-    // telemetry.is_working        = is_working_2;
+    telemetry.temperature       = pre_temp;
     telemetry.error_byte        = error_byte;
     telemetry.transaction_id    = transaction_id;
 
@@ -160,7 +154,7 @@ void CRadio::sendConfigPacket(int no_of_attempts)
     bool success = false;
 
     // Fill in the node config details in the telemetry packet
-    device_config.pkt_type       = CONFIG_PACKET;
+    device_config.pkt_type          = CONFIG_PACKET;
     device_config.device_type       = DEVICE_TYPE;
     device_config.version           = TELEMETRY_VERSION;
     device_config.firmware_version  = FW_VERSION;
