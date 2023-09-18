@@ -17,11 +17,12 @@
 #define ACK_TIMEOUT               10
 
 // Pin mapping -----------------------------------------------------
-#define TEMPERATURE_PRE_CS_PIN    5 // PE CS Pin
-#define TEMPERATURE_POWER_PIN     3 //temp - Software SPI
-#define TEMPERATURE_GND_PIN       2 //temp - Software SPI
-#define preSO                     6 //temp - Software SPI
-#define preSCK                    4 //temp - Software SPI
+#define THERMISTOR_PIN_0          A0 
+#define THERMISTOR_PIN_1          A1        
+#define THERMISTORNOMINAL         10000    // resistance at 25 degrees C
+#define TEMPERATURENOMINAL        25       // temp. for nominal resistance (almost always 25 C)
+#define BCOEFFICIENT              3950     // The beta coefficient of the thermistor (usually 3000-4000)
+#define SERIESRESISTOR            10000    // the value of the 'other' resistor
 #define FLASH_SS                  23
 
 // Error bits ------------------------------------------------------
@@ -39,6 +40,7 @@
 // #define Mins_to_ms(x)             ((int) ((x) * 1000 * 60))
 
 // Specify size of historical array --------------------------------
-#define ARRAY_LENGTH         10
+
+
 
 #endif

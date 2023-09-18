@@ -11,10 +11,8 @@ void setup() {
 
     // initialize pins input/output
     pinMode(LED_BUILTIN, OUTPUT);
-    // analogReadResolution(12); //use 12-bit resolution for analog reading
+    analogReadResolution(12); //use 12-bit resolution for analog reading
     //Powering the MAX chips ------------------------------------------
-    pinMode(TEMPERATURE_POWER_PIN, OUTPUT); digitalWrite(TEMPERATURE_POWER_PIN, HIGH);
-    pinMode(TEMPERATURE_GND_PIN, OUTPUT); digitalWrite(TEMPERATURE_GND_PIN, LOW);
     delay(500); // wait for MAX chips to stabilize
     Serial.println("PINS initialized!");
 
@@ -28,24 +26,12 @@ void setup() {
     Serial.println("Config Packet Sent!");
 }
 
-float read_in;
-float scaled_val;
-int counter;
-
-// Arrays
-long pre_temp_hist[ARRAY_LENGTH];
-
-// Cursors to replace next item in array
-int pre_temp_cursor = 0;
-
-// temperature intinial values (hard coded for testing)
-bool wrk = true;
-
 // the loop function runs over and over again forever
 void loop() {
-    float value = PreCouple.readCelsius();
-    Blink(220);
-    Radio.sendDataPacket(value, (uint8_t) 0);
+    float pre_temp = toCelcius(analogRead(THERMISTOR_PIN_0));
+    float post_temp = toCelcius(analogRead(THERMISTOR_PIN_1));
+    Blink(2000);
+    Radio.sendDataPacket(pre_temp, post_temp, (uint8_t) 0);
 }
 
 // Methods
@@ -56,4 +42,20 @@ void Blink(int DELAY_MS)
   delay(DELAY_MS/2);
   digitalWrite(LED_BUILTIN,LOW);
   delay(DELAY_MS/2);
+}
+
+float toCelcius(float resist_value) {
+    float steinhart = 0;
+  // convert the value to resistance
+  steinhart = 1023 / resist_value - 1;
+  steinhart = SERIESRESISTOR / steinhart;
+
+  // convert to degrees Celcius
+  steinhart = steinhart / THERMISTORNOMINAL;     // (R/Ro)
+  steinhart = log(steinhart);                  // ln(R/Ro)
+  steinhart /= BCOEFFICIENT;                   // 1/B * ln(R/Ro)
+  steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
+  steinhart = 1.0 / steinhart;                 // Invert
+  steinhart -= 273.15;                         // convert absolute temp to C
+  return steinhart;
 }
