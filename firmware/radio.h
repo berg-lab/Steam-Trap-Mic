@@ -9,7 +9,7 @@
 class CRadio {
   public:
     void initializeRadio();
-    void sendDataPacket(float pre_temp, float post_temp, uint8_t error_byte);
+    void sendDataPacket(uint16_t pre_temp, uint16_t post_temp, uint8_t error_byte);
     void sendConfigPacket(int no_of_attempts);
     
   private:
