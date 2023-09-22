@@ -47,8 +47,8 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    float       pre_temperature;
-    float       post_temperature;
+    uint16_t    pre_temperature;
+    uint16_t    post_temperature;
     uint8_t     error_byte;
     uint8_t     transaction_id;
 };
@@ -103,7 +103,7 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(float pre_temp, float post_temp, uint8_t error_byte)
+void CRadio::sendDataPacket(uint16_t pre_temp, uint16_t post_temp, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;

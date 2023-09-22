@@ -11,7 +11,7 @@ void setup() {
 
     // initialize pins input/output
     pinMode(LED_BUILTIN, OUTPUT);
-    analogReadResolution(12); //use 12-bit resolution for analog reading
+    // analogReadResolution(12); //use 12-bit resolution for analog reading
     //Powering the MAX chips ------------------------------------------
     delay(500); // wait for MAX chips to stabilize
     Serial.println("PINS initialized!");
@@ -28,9 +28,10 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-    float pre_temp = toCelcius(analogRead(THERMISTOR_PIN_0));
-    float post_temp = toCelcius(analogRead(THERMISTOR_PIN_1));
+    uint16_t pre_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_0))*100);
+    uint16_t post_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_1))*100);
     Blink(2000);
+    Serial.println(pre_temp); Serial.println(post_temp);
     Radio.sendDataPacket(pre_temp, post_temp, (uint8_t) 0);
 }
 
@@ -45,7 +46,7 @@ void Blink(int DELAY_MS)
 }
 
 float toCelcius(float resist_value) {
-    float steinhart = 0;
+  float steinhart = 0;
   // convert the value to resistance
   steinhart = 1023 / resist_value - 1;
   steinhart = SERIESRESISTOR / steinhart;
