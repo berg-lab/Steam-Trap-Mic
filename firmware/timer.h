@@ -8,13 +8,21 @@
 class CTimer {
     public:
         CTimer();
-        void resetAlarm();
+        void clearFlag();
         bool timerExpired();
-        void setTimer(byte seconds);
+        void setTimer(byte seconds, byte minutes, byte hours);
+        void goSleep();
 
     private:
         void setupInterrupt();
         static void alarmMatch();
+        // Set how often alarm goes off here
+        const byte alarmSeconds = 3;
+        const byte alarmMinutes = 0;
+        const byte alarmHours = 0;
+        // Set initial state (false=Awake)
+        volatile bool alarmFlag;
+        RTCZero rtc;
 };
 
 #endif

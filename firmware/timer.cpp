@@ -1,15 +1,12 @@
 #include "timer.h"
 
-RTCZero rtc;
-volatile bool alarm_flag;
-
 CTimer::CTimer(void) {
     alarm_flag = false;
     rtc.begin();
     setupInterrupt();
 }
 
-void CTimer::resetAlarm(void) {
+void CTimer::clearFlag(void) {
     alarm_flag = false;
 }
 
@@ -17,10 +14,14 @@ bool CTimer::timerExpired(void) {
     return alarm_flag;
 }
 
-void CTimer::setTimer(byte seconds) {
+void CTimer::setTimer(
+    byte seconds = 3,
+    byte minutes = 0,
+    byte hours = 0) 
+{
     rtc.setTime(0, 0, 0);
     rtc.setDate(1, 1, 1);
-    rtc.setAlarmTime(0, 0, seconds);
+    rtc.setAlarmTime(hours, minutes, seconds);
     rtc.enableAlarm(rtc.MATCH_HHMMSS);
 }
 
@@ -30,4 +31,8 @@ void CTimer::setupInterrupt(void) {
 
 void CTimer::alarmMatch(void) {
     alarm_flag = true;
+}
+
+void CTimer::goSleep(void) {
+    rtc.standbyMode();
 }

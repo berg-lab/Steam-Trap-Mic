@@ -137,7 +137,7 @@ void CRadio::sendDataPacket(float pre_temp, float post_temp, uint8_t error_byte)
                 break;
             }
         }
-        Timer.resetAlarm();
+        Timer.clearFlag();
         if (success) break;
     }
 
@@ -228,12 +228,3 @@ void CRadio::handleIncomingPacket(const unsigned char* raw)
     }
 }
 //=========================================================================================================
-// uint32_t CRadio::getPreTemp()
-// {
-//     return pre_temp_val;
-// }
-
-// uint32_t CRadio::getPostTemp()
-// {
-//     return post_temp_val;
-// }

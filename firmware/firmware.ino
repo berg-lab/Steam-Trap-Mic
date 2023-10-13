@@ -2,36 +2,43 @@
 #include "common.h"
 #include "globals.h"
 
-// the setup function runs once when you press reset or power the board
+// Setup (ran once at reset)
 void setup() {
-    // initialize serial communication for debugging
-    Serial.begin(SERIAL_BAUD);
-    delay(3000);
-    Serial.println("Serial initialized!");
+  // Serial Initialization
+  Serial.begin(SERIAL_BAUD);
+  delay(3000);
+  Serial.println("Serial initialized!");
 
-    // initialize pins input/output
-    pinMode(LED_BUILTIN, OUTPUT);
-    analogReadResolution(12); //use 12-bit resolution for analog reading
-    //Powering the MAX chips ------------------------------------------
-    delay(500); // wait for MAX chips to stabilize
-    Serial.println("PINS initialized!");
+  // initialize pins input/output
+  pinMode(LED_BUILTIN, OUTPUT);
+  // analogReadResolution(12); //use 12-bit resolution for analog reading
+  Serial.println("PINS initialized!");
 
-    // configure device with MAC address
-    // Flash.deviceSetup();
+  // MAC address configuration
+  // Flash.deviceSetup();
 
-    // initialize radio communication for transmitting data
-    Radio.initializeRadio();
-    Serial.println("Radio Initialized!");
-    Radio.sendConfigPacket(3);
-    Serial.println("Config Packet Sent!");
+  // Radio Initialization
+  Radio.initializeRadio();
+  Serial.println("Radio Initialized!");
+  Radio.sendConfigPacket(3);
+  Serial.println("Config Packet Sent!");
+
+  // Timer Initialization
+  Timer.clearFlag();
 }
 
-// the loop function runs over and over again forever
+// Loop (runs forever)
 void loop() {
-    float pre_temp = toCelcius(analogRead(THERMISTOR_PIN_0));
-    float post_temp = toCelcius(analogRead(THERMISTOR_PIN_1));
-    Blink(2000);
-    Radio.sendDataPacket(pre_temp, post_temp, (uint8_t) 0);
+  if(Timer.timerExpired) {
+    // clear interrupt flag
+    Timer.clearFlag();
+    // Measure temperature
+    sendTemp();
+  }
+  // Set new timer
+  Timer.setTimer(10);
+  Serial.prinln("Alarm set, going to sleep now.");
+  Timer.goSleep();
 }
 
 // Methods
@@ -58,4 +65,12 @@ float toCelcius(float resist_value) {
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert absolute temp to C
   return steinhart;
+}
+
+void sendTemp(void) {
+  uint16_t pre_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_0))*100);
+  uint16_t post_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_1))*100);
+  Blink(2000);
+  Serial.println(pre_temp); Serial.println(post_temp);
+  Radio.sendDataPacket(pre_temp, post_temp, (uint8_t) 0);
 }
