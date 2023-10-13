@@ -16,11 +16,6 @@ class CTimer {
     private:
         void setupInterrupt();
         static void alarmMatch();
-        // Set how often alarm goes off here
-        const byte alarmSeconds = 3;
-        const byte alarmMinutes = 0;
-        const byte alarmHours = 0;
-        // Set initial state (false=Awake)
         volatile bool alarmFlag;
         RTCZero rtc;
 };

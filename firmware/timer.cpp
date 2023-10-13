@@ -1,7 +1,7 @@
 #include "timer.h"
 
 CTimer::CTimer(void) {
-    alarm_flag = false;
+    alarm_flag = false; // Set initial state (false=Awake)
     rtc.begin();
     setupInterrupt();
 }
