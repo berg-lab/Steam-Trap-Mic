@@ -76,8 +76,8 @@ SPIFlash flash(SS_FLASHMEM, 0xEF30); //EF30 for 4mbit  Windbond chip (W25X40CL)
 
 // specifying MAX Hardware SPI pin
 #define preSO     6
-#define preSCK    5
-#define preCS     4
+#define preCS     5
+#define preSCK    4
 #define vccPin    3
 #define gndPin    2
 
