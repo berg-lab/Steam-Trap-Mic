@@ -123,7 +123,7 @@ void CRadio::sendDataPacket(uint16_t pre_temp, uint16_t post_temp, uint8_t error
         radio.send(GATEWAY_ID, &telemetry, sizeof(telemetry));
 
         // start a 1 second timer
-        Timer.setTimer(1);
+        Timer.setTimer(1,0,0);
 
         // sit in a loop for 1 second until a response is received
         while (!Timer.timerExpired())
@@ -137,7 +137,7 @@ void CRadio::sendDataPacket(uint16_t pre_temp, uint16_t post_temp, uint8_t error
                 break;
             }
         }
-        Timer.resetAlarm();
+        Timer.clearFlag();
         if (success) {
             // blink slow to show packet sent
             for (int x=0; x<3; x++) {
@@ -181,7 +181,7 @@ void CRadio::sendConfigPacket(int no_of_attempts)
         radio.send(GATEWAY_ID, &device_config, sizeof(device_config));
 
         // start a 1 second timer
-        Timer.setTimer(1);
+        Timer.setTimer(1,0,0);
 
         // sit in a loop for 1 second until a response is received
         while (!Timer.timerExpired())
