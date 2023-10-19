@@ -27,17 +27,20 @@ void setup() {
   Timer.clearFlag();
 }
 
+uint16_t pre_temp;
+uint16_t post_temp;
+
 // Loop (runs forever)
 void loop() {
-  if(Timer.timerExpired) {
+  if(Timer.timerExpired()) {
     // clear interrupt flag
     Timer.clearFlag();
     // Measure temperature
     sendTemp();
   }
-  // Set new timer
-  Timer.setTimer(10);
-  Serial.prinln("Alarm set, going to sleep now.");
+  // Set new 10 minute timer
+  Timer.setTimer(0,10,0);
+  Serial.println("Alarm set, going to sleep now.");
   Timer.goSleep();
 }
 
@@ -52,7 +55,7 @@ void Blink(int DELAY_MS)
 }
 
 float toCelcius(float resist_value) {
-    float steinhart = 0;
+  float steinhart = 0;
   // convert the value to resistance
   steinhart = 1023 / resist_value - 1;
   steinhart = SERIESRESISTOR / steinhart;
@@ -68,8 +71,8 @@ float toCelcius(float resist_value) {
 }
 
 void sendTemp(void) {
-  uint16_t pre_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_0))*100);
-  uint16_t post_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_1))*100);
+  pre_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_0))*100);
+  post_temp = (int)(toCelcius(analogRead(THERMISTOR_PIN_1))*100);
   Blink(2000);
   Serial.println(pre_temp); Serial.println(post_temp);
   Radio.sendDataPacket(pre_temp, post_temp, (uint8_t) 0);
