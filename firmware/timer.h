@@ -16,7 +16,6 @@ class CTimer {
     private:
         void setupInterrupt();
         static void alarmMatch();
-        volatile bool alarmFlag;
         RTCZero rtc;
 };
 

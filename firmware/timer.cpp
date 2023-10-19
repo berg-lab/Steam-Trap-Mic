@@ -1,17 +1,19 @@
 #include "timer.h"
 
+volatile bool alarmFlag;
+
 CTimer::CTimer(void) {
-    alarm_flag = false; // Set initial state (false=Awake)
+    alarmFlag = false; // Set initial state (false=Awake)
     rtc.begin();
     setupInterrupt();
 }
 
 void CTimer::clearFlag(void) {
-    alarm_flag = false;
+    alarmFlag = false;
 }
 
 bool CTimer::timerExpired(void) {
-    return alarm_flag;
+    return alarmFlag;
 }
 
 void CTimer::setTimer(
@@ -30,7 +32,7 @@ void CTimer::setupInterrupt(void) {
 }
 
 void CTimer::alarmMatch(void) {
-    alarm_flag = true;
+    alarmFlag = true;
 }
 
 void CTimer::goSleep(void) {
