@@ -47,8 +47,8 @@ struct stm_trap_telemetry_t
 {
     uint8_t     pkt_type;
     uint8_t     version;
-    float       pre_temperature;
-    float       post_temperature;
+    uint16_t    pre_temperature;
+    uint16_t    post_temperature;
     uint8_t     error_byte;
     uint8_t     transaction_id;
 };
@@ -103,7 +103,7 @@ void CRadio::initializeRadio() {
 //=========================================================================================================
 // sendDataPacket() - Loads data into packet and transmits it over the radio
 //=========================================================================================================
-void CRadio::sendDataPacket(float pre_temp, float post_temp, uint8_t error_byte)
+void CRadio::sendDataPacket(uint16_t pre_temp, uint16_t post_temp, uint8_t error_byte)
 {
     stm_trap_telemetry_t telemetry;
     bool success = false;
@@ -137,8 +137,17 @@ void CRadio::sendDataPacket(float pre_temp, float post_temp, uint8_t error_byte)
                 break;
             }
         }
-        Timer.clearFlag();
-        if (success) break;
+        Timer.resetAlarm();
+        if (success) {
+            // blink slow to show packet sent
+            for (int x=0; x<3; x++) {
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(250);
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(250);
+            }
+            break;
+        }
     }
 
     // increment transaction ID and reset it to 1 if it overflows
@@ -166,26 +175,16 @@ void CRadio::sendConfigPacket(int no_of_attempts)
     // Attempt to send a packet to the gateway 3 times and wait for response
     for (int attempt = 0; attempt < no_of_attempts; ++attempt)
     {
+        Serial.print("Attempt: ");
+        Serial.println(attempt);
         // send the prepared config packet
         radio.send(GATEWAY_ID, &device_config, sizeof(device_config));
 
-        // blink slow to show packet sent
-        for (int x=0; x<10; x++) {
-            digitalWrite(LED_BUILTIN, HIGH);
-            delay(250);
-            digitalWrite(LED_BUILTIN, LOW);
-            delay(250);
-            Serial.print("Blinkie #: ");
-            Serial.print(attempt*10+x);
-            Serial.print("\n");
-        }
-        Serial.println(attempt);
         // start a 1 second timer
-        // Timer.setTimer(1);
+        Timer.setTimer(1);
 
         // sit in a loop for 1 second until a response is received
-        int countt = 0;
-        while (countt<10)
+        while (!Timer.timerExpired())
         {
             // if we receive a response
             if (radio.receiveDone())
@@ -195,12 +194,17 @@ void CRadio::sendConfigPacket(int no_of_attempts)
                 success = true;
                 break;
             }
-            Serial.print("Iteration #: ");
-            Serial.println(countt);
-            countt++;
-            delay(100);
         }
-        if (success) break;
+        if (success) {
+            // blink the LED fast to indicate we successfully sent config packet
+            for (int x=0; x<100; x++) {
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(25);
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(25);
+            }
+            break;
+        }
     }
     Serial.println("Finally done");
 }
@@ -218,8 +222,8 @@ void CRadio::handleIncomingPacket(const unsigned char* raw)
     // make sure the packet type is a response from the gateway to BORC
     if (packet.pkt_type == RESPONSE_PACKET)
     {   
-        // blink the LED to indicate we a received packet
-        for (int x=0; x<100; x++) {
+        // blink the LED fast to indicate we a received packet
+        for (int x=0; x<10; x++) {
             digitalWrite(LED_BUILTIN, HIGH);
             delay(25);
             digitalWrite(LED_BUILTIN, LOW);
