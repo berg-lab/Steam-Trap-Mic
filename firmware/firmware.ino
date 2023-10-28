@@ -33,15 +33,18 @@ uint16_t post_temp;
 // Loop (runs forever)
 void loop() {
   if(Timer.timerExpired()) {
+
     // clear interrupt flag
     Timer.clearFlag();
+
     // Measure temperature
     sendTemp();
+
+    // Set new 10 minute timer
+    Timer.setTimer(0,10,0);
+    Serial.println("Alarm set, going to sleep now.");
+    Timer.goSleep();
   }
-  // Set new 10 minute timer
-  Timer.setTimer(0,10,0);
-  Serial.println("Alarm set, going to sleep now.");
-  Timer.goSleep();
 }
 
 // Methods

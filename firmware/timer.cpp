@@ -16,10 +16,7 @@ bool CTimer::timerExpired(void) {
     return alarmFlag;
 }
 
-void CTimer::setTimer(
-    byte seconds = 3,
-    byte minutes = 0,
-    byte hours = 0) 
+void CTimer::setTimer(byte seconds, byte minutes, byte hours) 
 {
     rtc.setTime(0, 0, 0);
     rtc.setDate(1, 1, 1);
