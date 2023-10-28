@@ -8,13 +8,15 @@
 class CTimer {
     public:
         CTimer();
-        void resetAlarm();
+        void clearFlag();
         bool timerExpired();
-        void setTimer(byte seconds);
+        void setTimer(byte seconds, byte minutes, byte hours);
+        void goSleep();
 
     private:
         void setupInterrupt();
         static void alarmMatch();
+        RTCZero rtc;
 };
 
 #endif

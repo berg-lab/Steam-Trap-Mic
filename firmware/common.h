@@ -14,6 +14,7 @@
 // Global configuration constants ----------------------------------
 #define SERIAL_BAUD               115200
 #define MAX_VOLTAGE               5.0f
+#define MAX_ADC                   4095
 #define ACK_TIMEOUT               10
 
 // Pin mapping -----------------------------------------------------
